@@ -8,7 +8,9 @@ from app.ports import SupabasePortDep
 
 
 class GenerateUploadUrlService:
-    def __init__(self, spb_port: SupabasePortDep, collection_repository: CollectionRepositoryDep):
+    def __init__(
+        self, spb_port: SupabasePortDep, collection_repository: CollectionRepositoryDep
+    ):
         self.__spb_port = spb_port
         self.__collection_repository = collection_repository
 
