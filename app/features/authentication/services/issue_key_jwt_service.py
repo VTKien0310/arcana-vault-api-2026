@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
-from typing import Annotated
-from typing import TypedDict
+from typing import Annotated, TypedDict
 
 import jwt
 from fastapi import Depends, status

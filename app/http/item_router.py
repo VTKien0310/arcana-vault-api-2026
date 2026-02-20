@@ -5,7 +5,10 @@ from app.features.authentication.guards import (
     SecretJwtGuardDep,
 )
 from app.features.item.requests import ItemRequest
-from app.features.item.services import GenerateUploadUrlServiceDep
+from app.features.item.services import (
+    GenerateUploadUrlServiceDep,
+    ListItemInCollectionServiceDep,
+)
 
 router = APIRouter(
     prefix="/items",
@@ -29,3 +32,13 @@ async def generate_upload_url(
         "path": signed_url["path"],
         "token": signed_url["token"],
     }
+
+
+@router.get("/")
+async def list_items(
+    current_user: CurrentAuthenticatedUserDep,
+    list_item_in_collection_service: ListItemInCollectionServiceDep,
+):
+    items = list_item_in_collection_service.handle(current_user)
+
+    return items
