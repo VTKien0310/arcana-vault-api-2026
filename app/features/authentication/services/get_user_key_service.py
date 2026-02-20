@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from app.features.key.entities.key_entity import Key, KeyRepositoryDep
+from app.features.authentication.entities import KeyRepositoryDep
+from app.data import Key
 
 
 class GetUserKeyService:

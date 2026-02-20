@@ -3,9 +3,11 @@ from app.features.authentication.guards import (
     CurrentAuthenticatedUserDep,
     AuthenticatedGuardDep,
 )
-from app.features.authentication.services import IssueKeyJwtServiceDep
-from app.features.key.requests import KeyValueRequest
-from app.features.key.services import RefreshUserKeyServiceDep
+from app.features.authentication.services import (
+    IssueKeyJwtServiceDep,
+    RefreshUserKeyServiceDep,
+)
+from app.features.authentication.requests import KeyValueRequest
 
 router = APIRouter(prefix="/key", tags=["key"], dependencies=[AuthenticatedGuardDep])
 

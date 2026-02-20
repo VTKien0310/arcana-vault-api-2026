@@ -7,7 +7,7 @@ from fastapi import Depends, status
 
 from app.core import AppException
 from app.core.config import settings
-from app.features.key.services import GetUserKeyServiceDep
+from .get_user_key_service import GetUserKeyServiceDep
 
 
 class KeyJwtPayload(TypedDict):

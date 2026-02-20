@@ -3,7 +3,8 @@ from datetime import datetime, timezone, timedelta
 from typing import Annotated
 from fastapi import Depends
 from app.core.config import settings
-from app.features.key.entities.key_entity import Key, KeyRepositoryDep
+from app.features.authentication.entities import KeyRepositoryDep
+from app.data import Key
 from .get_user_key_service import GetUserKeyServiceDep
 
 
