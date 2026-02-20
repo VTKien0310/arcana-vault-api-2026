@@ -9,6 +9,7 @@ from app.features.item.services import (
     GenerateUploadUrlServiceDep,
     ListItemInCollectionServiceDep,
 )
+from app.http.request import ListResourceParamsDep
 
 router = APIRouter(
     prefix="/items",
@@ -36,9 +37,18 @@ async def generate_upload_url(
 
 @router.get("/")
 async def list_items(
+    list_params: ListResourceParamsDep,
     current_user: CurrentAuthenticatedUserDep,
     list_item_in_collection_service: ListItemInCollectionServiceDep,
 ):
-    items = list_item_in_collection_service.handle(current_user)
+    sort_condition = (
+        None
+        if not list_params["sort_conditions"]
+        else list_params["sort_conditions"].pop()
+    )
 
-    return items
+    items = list_item_in_collection_service.handle(
+        current_user, sort_condition=sort_condition
+    )
+
+    return {"items": items}
