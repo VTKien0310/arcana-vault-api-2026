@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Annotated
 from fastapi import Depends
+from pydantic import BaseModel
 from supabase_auth import User as SupabaseAuthUser
 
 from app.ports import SupabasePortDep
 
 
-@dataclass
-class User:
+class User(BaseModel):
     id: str
     aud: str
     created_at: datetime

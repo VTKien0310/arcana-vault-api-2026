@@ -1,13 +1,15 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import Depends
 from app.features.authentication.entities import User
+from app.features.item.entities import ItemRepositoryDep, Item
 from app.http.request import SortCondition
 from app.ports import SupabasePortDep
 
 
 class ListItemInCollectionService:
-    def __init__(self, spb_port: SupabasePortDep):
+    def __init__(self, spb_port: SupabasePortDep, item_repository: ItemRepositoryDep):
         self.__spb_port = spb_port
+        self.__item_repository = item_repository
 
     def handle(
         self,
@@ -16,7 +18,7 @@ class ListItemInCollectionService:
         offset: int = 0,
         sort_condition: SortCondition = None,
         limit: int = 100,
-    ):
+    ) -> List[Item]:
         path = user.id
 
         if collection != "":
@@ -31,7 +33,7 @@ class ListItemInCollectionService:
             }
         )
 
-        return self.__spb_port.storage_vault().list(
+        list_results = self.__spb_port.storage_vault().list(
             path,
             {
                 "limit": limit,
@@ -39,6 +41,8 @@ class ListItemInCollectionService:
                 "sortBy": sort_by,
             },
         )
+
+        return self.__item_repository.items_from_spb_list(list_results)
 
 
 ListItemInCollectionServiceDep = Annotated[ListItemInCollectionService, Depends()]
