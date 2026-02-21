@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get("/")
-async def list_collections(
+def list_collections(
     current_user: CurrentAuthenticatedUserDep,
     list_collections_service: ListCollectionsServiceDep,
 ) -> list[Collection]:

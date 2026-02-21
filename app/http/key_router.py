@@ -6,6 +6,7 @@ from app.features.authentication.guards import (
 from app.features.authentication.services import (
     IssueKeyJwtServiceDep,
     RefreshUserKeyServiceDep,
+    SendUserKeyServiceDep,
 )
 from app.features.authentication.requests import KeyValueRequest
 
@@ -13,11 +14,14 @@ router = APIRouter(prefix="/key", tags=["key"], dependencies=[AuthenticatedGuard
 
 
 @router.post("/refresh")
-def refresh(
+async def refresh(
     current_user: CurrentAuthenticatedUserDep,
     refresh_user_key_service: RefreshUserKeyServiceDep,
+    send_user_key_service: SendUserKeyServiceDep,
 ):
     key = refresh_user_key_service.handle(current_user.id)
+
+    await send_user_key_service.handle(key)
 
     return {"expiration": key.expiration, "channels": key.channels}
 

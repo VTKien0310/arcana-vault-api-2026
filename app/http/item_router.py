@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 @router.post("/upload-url")
-async def generate_upload_url(
+def generate_upload_url(
     request: ItemRequest,
     current_user: CurrentAuthenticatedUserDep,
     generate_upload_url_service: GenerateUploadUrlServiceDep,
@@ -38,7 +38,7 @@ async def generate_upload_url(
 
 
 @router.post("/view-url")
-async def generate_view_url(
+def generate_view_url(
     request: ItemRequest,
     current_user: CurrentAuthenticatedUserDep,
     generate_view_url_service: GenerateViewUrlServiceDep,
@@ -53,7 +53,7 @@ async def generate_view_url(
 
 
 @router.get("/")
-async def list_items(
+def list_items(
     list_params: ListResourceParamsDep,
     current_user: CurrentAuthenticatedUserDep,
     list_item_in_collection_service: ListItemInCollectionServiceDep,

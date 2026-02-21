@@ -32,5 +32,7 @@ class Settings(BaseSettings):
 
     KEY_EXPIRATION_MINUTES: int = 15
 
+    TELEGRAM_BOT_TOKEN: str = ""
+
 
 settings = Settings()
