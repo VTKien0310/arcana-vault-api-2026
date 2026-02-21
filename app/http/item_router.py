@@ -64,8 +64,17 @@ async def list_items(
         else list_params["sort_conditions"].pop()
     )
 
+    collection = next(
+        (
+            f["value"]
+            for f in list_params["filter_conditions"]
+            if f["field"] == "collection"
+        ),
+        "",
+    )
+
     items = list_item_in_collection_service.handle(
-        current_user, sort_condition=sort_condition
+        current_user, collection=collection, sort_condition=sort_condition
     )
 
     return items
