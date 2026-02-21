@@ -21,5 +21,14 @@ class CollectionRepository(DbRepository):
 
         return collection
 
+    def list_by_user_id(self, user_id: str) -> list[Collection]:
+        statement = (
+            select(Collection)
+            .where(Collection.user_id == user_id)
+            .order_by(Collection.name)
+        )
+        collections = self._db_session.exec(statement).all()
+        return list(collections)
+
 
 CollectionRepositoryDep = Annotated[CollectionRepository, Depends()]

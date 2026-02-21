@@ -17,3 +17,8 @@ from .generate_view_url_service import (
     GenerateViewUrlService,
     GenerateViewUrlServiceDep,
 )
+
+from .list_collections_service import (
+    ListCollectionsService,
+    ListCollectionsServiceDep,
+)
