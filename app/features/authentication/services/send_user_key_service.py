@@ -1,6 +1,7 @@
 import asyncio
 from typing import Annotated
 from fastapi import Depends
+from app import settings
 from app.data import Key
 from app.features.authentication.entities.key_entity import KeyChannel
 from app.ports import TelegramPortDep
@@ -11,10 +12,13 @@ class SendUserKeyService:
         self.__telegram_port = telegram_port
 
     async def handle(self, key: Key) -> None:
+        app_env = settings.ENVIRONMENT
+        message = f"Your {app_env} key is: {key.value}"
+
         tasks = []
         if KeyChannel.TELEGRAM.value in key.channels:
             tasks.append(
-                self.__telegram_port.send_message(key.telegram_chat_id, key.value)
+                self.__telegram_port.send_message(key.telegram_chat_id, message)
             )
 
         await asyncio.gather(*tasks)

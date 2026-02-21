@@ -7,6 +7,8 @@ class Settings(BaseSettings):
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
+    ENVIRONMENT: str = "development"
+
     APP_NAME: str = "Arcana Vault API 2026"
     APP_VERSION: str = "2026"
     APP_PORT: int = 8000
