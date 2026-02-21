@@ -10,7 +10,7 @@ primary_region = 'sin'
 
 [env]
   ENVIRONMENT = 'production'
-  PORT = '8000'
+  APP_PORT = '8000'
 
 [http_service]
   internal_port = 8000
