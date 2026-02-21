@@ -1,5 +1,5 @@
 from typing import Annotated, TypedDict
-from fastapi import Depends
+from fastapi import Depends, Request
 
 
 class SortCondition(TypedDict):
@@ -7,21 +7,45 @@ class SortCondition(TypedDict):
     desc: bool
 
 
+class FilterCondition(TypedDict):
+    field: str
+    value: str
+
+
 class ListResourceParams(TypedDict):
     offset: int
     limit: int
     sort_conditions: list[SortCondition]
+    filter_conditions: list[FilterCondition]
 
 
 async def resolve_list_resource_params(
-    offset: int = 0, limit: int = 100, sort: str = ""
+    request: Request,
+    offset: int = 0,
+    limit: int = 100,
+    sort: str = "",
 ) -> ListResourceParams:
     sort_conditions: list[SortCondition] = [
         {"field": s.lstrip("-"), "desc": s.startswith("-")}
         for s in sort.split(",")
         if s
     ]
-    return {"offset": offset, "limit": limit, "sort_conditions": sort_conditions}
+
+    raw_filters = {
+        key[len("filter[") : -1]: value
+        for key, value in request.query_params.multi_items()
+        if key.startswith("filter[") and key.endswith("]")
+    }
+    filter_conditions: list[FilterCondition] = [
+        {"field": field, "value": value} for field, value in raw_filters.items()
+    ]
+
+    return {
+        "offset": offset,
+        "limit": limit,
+        "sort_conditions": sort_conditions,
+        "filter_conditions": filter_conditions,
+    }
 
 
 ListResourceParamsDep = Annotated[
