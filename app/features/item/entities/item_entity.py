@@ -5,12 +5,11 @@ from pydantic import BaseModel
 
 
 class Item(BaseModel):
-    id: str
+    id: str | None
     name: str
-    description: str
-    created_at: datetime
-    updated_at: datetime
-    last_accessed_at: datetime
+    created_at: datetime | None
+    updated_at: datetime | None
+    last_accessed_at: datetime | None
 
 
 class ItemRepository:
@@ -19,10 +18,15 @@ class ItemRepository:
         return Item(
             id=item_dict["id"],
             name=item_dict["name"],
-            description=item_dict["description"],
-            created_at=datetime.fromisoformat(item_dict["created_at"]),
-            updated_at=datetime.fromisoformat(item_dict["updated_at"]),
-            last_accessed_at=datetime.fromisoformat(item_dict["last_accessed_at"]),
+            created_at=datetime.fromisoformat(item_dict["created_at"])
+            if item_dict["created_at"] is not None
+            else None,
+            updated_at=datetime.fromisoformat(item_dict["updated_at"])
+            if item_dict["updated_at"] is not None
+            else None,
+            last_accessed_at=datetime.fromisoformat(item_dict["last_accessed_at"])
+            if item_dict["last_accessed_at"] is not None
+            else None,
         )
 
     @classmethod
