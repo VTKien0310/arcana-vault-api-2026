@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("")
 def list_collections(
     current_user: CurrentAuthenticatedUserDep,
     list_collections_service: ListCollectionsServiceDep,

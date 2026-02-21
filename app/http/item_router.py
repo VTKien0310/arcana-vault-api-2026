@@ -52,7 +52,7 @@ def generate_view_url(
     }
 
 
-@router.get("/")
+@router.get("")
 def list_items(
     list_params: ListResourceParamsDep,
     current_user: CurrentAuthenticatedUserDep,

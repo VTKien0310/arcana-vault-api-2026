@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.core import AppException
 from app.features.item.entities import CollectionRepositoryDep
 from app.features.authentication.entities import User
-from app.features.item.services import GetItemByNameInCollectionServiceDep
+from .get_item_by_name_in_collection_service import GetItemByNameInCollectionServiceDep
 from app.ports import SupabasePortDep
 
 

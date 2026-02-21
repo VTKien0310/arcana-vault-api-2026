@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from app import settings
 from app.features.authentication.entities import User
 from app.ports import SupabasePortDep
 
@@ -13,11 +14,15 @@ class GenerateViewUrlService:
     def handle(self, user: User, filename: str, folder: str) -> str:
         path = (
             f"{user.id}/{filename}"
-            if folder is ""
+            if folder == ""
             else f"{user.id}/{folder}/{filename}"
         )
 
-        return self.__spb_port.storage_vault().create_signed_url(path)["signedUrl"]
+        url_ttl = settings.SUPABASE_SIGNED_URL_EXPIRATION
+
+        return self.__spb_port.storage_vault().create_signed_url(path, url_ttl)[
+            "signedUrl"
+        ]
 
 
 GenerateViewUrlServiceDep = Annotated[GenerateViewUrlService, Depends()]

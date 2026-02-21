@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_BUCKET_NAME: str = ""
+    SUPABASE_SIGNED_URL_EXPIRATION: int = 60
 
     JWT_PRIVATE_KEY: str = ""
     JWT_PUBLIC_KEY: str = ""
