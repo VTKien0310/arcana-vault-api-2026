@@ -7,3 +7,8 @@ from .list_item_in_collection_service import (
     ListItemInCollectionService,
     ListItemInCollectionServiceDep,
 )
+
+from .get_item_by_name_in_collection_service import (
+    GetItemByNameInCollectionService,
+    GetItemByNameInCollectionServiceDep,
+)
