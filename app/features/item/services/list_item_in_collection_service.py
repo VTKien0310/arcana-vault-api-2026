@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 from fastapi import Depends
 from app.features.authentication.entities import User
 from app.features.item.entities import ItemRepositoryDep, Item
@@ -18,7 +18,7 @@ class ListItemInCollectionService:
         offset: int = 0,
         sort_condition: SortCondition = None,
         limit: int = 100,
-    ) -> List[Item]:
+    ) -> list[Item]:
         path = user.id
 
         if collection != "":

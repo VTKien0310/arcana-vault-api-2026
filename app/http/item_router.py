@@ -4,6 +4,7 @@ from app.features.authentication.guards import (
     AuthenticatedGuardDep,
     SecretJwtGuardDep,
 )
+from app.features.item.entities import Item
 from app.features.item.requests import ItemRequest
 from app.features.item.services import (
     GenerateUploadUrlServiceDep,
@@ -56,7 +57,7 @@ async def list_items(
     list_params: ListResourceParamsDep,
     current_user: CurrentAuthenticatedUserDep,
     list_item_in_collection_service: ListItemInCollectionServiceDep,
-):
+) -> list[Item]:
     sort_condition = (
         None
         if not list_params["sort_conditions"]
@@ -67,4 +68,4 @@ async def list_items(
         current_user, sort_condition=sort_condition
     )
 
-    return {"items": items}
+    return items
