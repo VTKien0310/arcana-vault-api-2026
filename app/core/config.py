@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     APP_ENABLE_DOCS: bool = False
 
     API_PREFIX: str = "/api"
-    API_ALLOW_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    API_ALLOW_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000", "http://localhost:8100"]
 
     DB_HOST: str = ""
     DB_PORT: str = "5432"
