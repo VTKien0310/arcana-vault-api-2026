@@ -22,11 +22,7 @@ class GenerateUploadUrlService:
         )
 
     def handle(self, user: User, filename: str, folder: str) -> dict[str, str]:
-        if folder == "":
-            path = f"{user.id}/{filename}"
-        else:
-            self.__collection_repository.find_or_create(folder, user.id)
-            path = f"{user.id}/{folder}/{filename}"
+        path = self.__make_file_path(user, filename, folder)
 
         has_name_duplication = (
             self.__get_item_by_name_in_collection_service.handle(
@@ -42,6 +38,14 @@ class GenerateUploadUrlService:
             )
 
         return self.__spb_port.storage_vault().create_signed_upload_url(path)
+
+    def __make_file_path(self, user: User, filename: str, folder: str) -> str:
+        if folder == "":
+            return f"{user.id}/{filename}"
+
+        self.__collection_repository.find_or_create(folder, user.id)
+
+        return f"{user.id}/{folder}/{filename}"
 
 
 GenerateUploadUrlServiceDep = Annotated[GenerateUploadUrlService, Depends()]

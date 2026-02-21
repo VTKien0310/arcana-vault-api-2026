@@ -12,3 +12,8 @@ from .get_item_by_name_in_collection_service import (
     GetItemByNameInCollectionService,
     GetItemByNameInCollectionServiceDep,
 )
+
+from .generate_view_url_service import (
+    GenerateViewUrlService,
+    GenerateViewUrlServiceDep,
+)

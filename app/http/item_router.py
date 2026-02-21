@@ -8,6 +8,7 @@ from app.features.item.requests import ItemRequest
 from app.features.item.services import (
     GenerateUploadUrlServiceDep,
     ListItemInCollectionServiceDep,
+    GenerateViewUrlServiceDep,
 )
 from app.http.request import ListResourceParamsDep
 
@@ -32,6 +33,21 @@ async def generate_upload_url(
         "url": signed_url["signedUrl"],
         "path": signed_url["path"],
         "token": signed_url["token"],
+    }
+
+
+@router.post("/view-url")
+async def generate_view_url(
+    request: ItemRequest,
+    current_user: CurrentAuthenticatedUserDep,
+    generate_view_url_service: GenerateViewUrlServiceDep,
+):
+    signed_url = generate_view_url_service.handle(
+        current_user, request.item, request.collection
+    )
+
+    return {
+        "url": signed_url,
     }
 
 
