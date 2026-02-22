@@ -19,7 +19,7 @@ class ListResourceParams(TypedDict):
     filter_conditions: list[FilterCondition]
 
 
-async def resolve_list_resource_params(
+async def _resolve_list_resource_params(
     request: Request,
     offset: int = 0,
     limit: int = 100,
@@ -49,5 +49,5 @@ async def resolve_list_resource_params(
 
 
 ListResourceParamsDep = Annotated[
-    ListResourceParams, Depends(resolve_list_resource_params)
+    ListResourceParams, Depends(_resolve_list_resource_params)
 ]

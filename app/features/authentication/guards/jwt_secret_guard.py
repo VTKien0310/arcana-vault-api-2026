@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.features.authentication.services import KeyJwtPayload
 
 
-def decode_secret_jwt(request: Request) -> KeyJwtPayload:
+def _decode_secret_jwt(request: Request) -> KeyJwtPayload:
     token = request.headers.get("X-SECRET-JWT")
 
     if not token:
@@ -38,5 +38,5 @@ def decode_secret_jwt(request: Request) -> KeyJwtPayload:
         ) from exc
 
 
-SecretJwtGuardDep = Depends(decode_secret_jwt)
-SecretJwtPayloadDep = Annotated[KeyJwtPayload, Depends(decode_secret_jwt)]
+SecretJwtGuardDep = Depends(_decode_secret_jwt)
+SecretJwtPayloadDep = Annotated[KeyJwtPayload, Depends(_decode_secret_jwt)]
