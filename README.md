@@ -67,7 +67,7 @@ This project is ready to run on Fly.io using the included `Dockerfile` and `fly.
 
 ### Notes:
 
-- The service listens on internal port 8080 (mapped to 80/443 externally). `PORT=8080` is set in `fly.toml` and the
+- The service listens on internal port 8000 (mapped to 80/443 externally). `PORT=8000` is set in `fly.toml` and the
   scontainer.
 - The app uses `pydantic-settings`; environment variables can override defaults in `app/core/config.py`.
 - Scale memory/CPU (example): `fly scale vm shared-cpu-1x --memory 256`
@@ -76,5 +76,5 @@ This project is ready to run on Fly.io using the included `Dockerfile` and `fly.
 ## Local build/run
 
 - Build: `docker build -t arcana-vault-api-2026 .`
-- Run: `docker run -p 8080:8080 arcana-vault-api-2026`
-- The app will be available at: `http://localhost:8080/`
+- Run: `docker run -p 8000:8000 arcana-vault-api-2026`
+- The app will be available at: `http://localhost:8000/`
