@@ -4,7 +4,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlalchemy.engine import URL
 from app.core.config import settings
 
-engine = create_engine(
+_engine = create_engine(
     URL.create(
         drivername="postgresql",
         username=settings.DB_USER,
@@ -18,12 +18,12 @@ engine = create_engine(
 
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(_engine)
 
 
-def get_db_session():
-    with Session(engine) as session:
+def _get_db_session():
+    with Session(_engine) as session:
         yield session
 
 
-DbSessionDep = Annotated[Session, Depends(get_db_session)]
+DbSessionDep = Annotated[Session, Depends(_get_db_session)]
