@@ -2,7 +2,7 @@
 
 ## About
 
-Back-end API for the Arcana Vault project. Some features are still in development or only working at minimum acceptance level.
+Back-end API for the Arcana Vault project. Some features are still in development or only working at the minimum acceptance level.
 
 ## Project specification
 
