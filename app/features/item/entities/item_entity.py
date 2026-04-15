@@ -5,7 +5,8 @@ from pydantic import BaseModel
 
 
 class Item(BaseModel):
-    id: str
+    # Expect the fields type-hinted as None to be None for directories. Yes, Supabase's directory has a None for id.
+    id: str | None
     name: str
     created_at: datetime | None
     updated_at: datetime | None
@@ -30,8 +31,8 @@ class ItemRepository:
             last_accessed_at=datetime.fromisoformat(item_dict["last_accessed_at"])
             if item_dict["last_accessed_at"] is not None
             else None,
-            size=metadata.get("size"),
-            mime_type=metadata.get("mimetype"),
+            size=metadata.get("size") if metadata is not None else None,
+            mime_type=metadata.get("mimetype") if metadata is not None else None,
         )
 
     @classmethod
