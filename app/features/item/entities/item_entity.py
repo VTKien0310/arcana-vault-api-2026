@@ -5,16 +5,19 @@ from pydantic import BaseModel
 
 
 class Item(BaseModel):
-    id: str | None
+    id: str
     name: str
     created_at: datetime | None
     updated_at: datetime | None
     last_accessed_at: datetime | None
+    size: int | None
+    mime_type: str | None
 
 
 class ItemRepository:
     @classmethod
     def item_from_spb_list(cls, item_dict: dict[str, Any]) -> Item:
+        metadata = item_dict.get("metadata", {})
         return Item(
             id=item_dict["id"],
             name=item_dict["name"],
@@ -27,6 +30,8 @@ class ItemRepository:
             last_accessed_at=datetime.fromisoformat(item_dict["last_accessed_at"])
             if item_dict["last_accessed_at"] is not None
             else None,
+            size=metadata.get("size"),
+            mime_type=metadata.get("mimetype"),
         )
 
     @classmethod
