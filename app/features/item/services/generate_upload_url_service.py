@@ -1,10 +1,10 @@
 from typing import Annotated
 from fastapi import Depends
+from storage3.exceptions import StorageApiError
 
 from app.core import AppException
 from app.features.item.entities import CollectionRepositoryDep
 from app.features.authentication.entities import User
-from .get_item_by_name_in_collection_service import GetItemByNameInCollectionServiceDep
 from app.ports import SupabasePortDep
 
 
@@ -13,31 +13,24 @@ class GenerateUploadUrlService:
         self,
         spb_port: SupabasePortDep,
         collection_repository: CollectionRepositoryDep,
-        get_item_by_name_in_collection_service: GetItemByNameInCollectionServiceDep,
     ):
         self.__spb_port = spb_port
         self.__collection_repository = collection_repository
-        self.__get_item_by_name_in_collection_service = (
-            get_item_by_name_in_collection_service
-        )
 
     def handle(self, user: User, filename: str, folder: str) -> dict[str, str]:
         path = self.__make_file_path(user, filename, folder)
 
-        has_name_duplication = (
-            self.__get_item_by_name_in_collection_service.handle(
-                user.id, filename, folder
-            )
-            is not None
-        )
-        if has_name_duplication:
-            raise AppException(
-                status_code=409,
-                code="item_name_duplication",
-                message="Item with the same name already exists in the collection",
-            )
+        try:
+            return self.__spb_port.storage_vault().create_signed_upload_url(path)
+        except StorageApiError as storage_api_error:
+            if storage_api_error.status == 409:
+                raise AppException(
+                    status_code=409,
+                    code="item_path_duplicate",
+                    message="Item with this path already exists",
+                ) from storage_api_error
 
-        return self.__spb_port.storage_vault().create_signed_upload_url(path)
+            raise storage_api_error
 
     def __make_file_path(self, user: User, filename: str, folder: str) -> str:
         if folder == "":
