@@ -1,0 +1,247 @@
+# AGENTS.md
+
+## Project: Arcana Vault API
+
+Arcana Vault is a secure cloud-storage Progressive Web App (PWA) for storing and managing user videos, images, and
+documents.
+
+### Tech Stack
+
+- **Backend framework:** FastAPI
+- **Database:** PostgreSQL via SQLModel + SQLAlchemy
+- **Auth & storage:** Supabase (authentication, object storage)
+- **Data validation:** Pydantic + pydantic-settings
+- **Cryptography:** JWT (RS256) via PyJWT, argon2 for key hashing
+- **Python version:** 3.14
+- **Package manager:** uv
+- **Linter/Formatter:** Ruff
+- **Deployment:** Fly.io (Docker)
+
+This file defines the standards and expectations that coding agents must follow when working on this project.
+
+## Core Principles
+
+- Prioritize **security, maintainability, and clarity** over cleverness.
+- Follow **FastAPI best practices**.
+- Follow **Python best practices**.
+- Prefer **simple, readable, composable solutions**.
+- Respect the separation of responsibilities between the HTTP layer, features, data access, and external ports.
+
+## Virtual Environment
+
+- **Always** activate the virtual environment before running any Python command:
+  ```bash
+  source .venv/bin/activate
+  ```
+- When you are finished running Python commands, deactivate the environment:
+  ```bash
+  deactivate
+  ```
+- Do not assume the virtual environment is already active — always activate it explicitly at the start of any shell
+  session that runs Python.
+
+## Architecture
+
+The application follows a layered architecture under `app/`:
+
+```
+app/
+├── core/          # Config, bootstrap, error handling, response wrapping
+├── data/          # SQLModel database models, session, DbRepository base class
+├── features/      # Domain logic organized by feature (authentication, item, ...)
+│   ├── entities/  # Domain models, repositories
+│   ├── guards/    # Auth guards (Supabase bearer, JWT secret header)
+│   ├── requests/  # Request DTOs (Pydantic BaseModel)
+│   └── services/  # Business logic services
+├── http/          # FastAPI routers (API endpoints)
+│   └── request/   # Shared request parsing utilities
+├── ports/         # External service adapters (Supabase, Telegram)
+├── __init__.py    # App factory (create_app)
+└── main.py        # Entrypoint
+```
+
+### Layers
+
+- **`http/`** — Thin routers. Parse requests, delegate to services, return responses. No business logic.
+- **`features/`** — All domain logic. Organized by feature. Each feature has `entities/`, `guards/`, `requests/`,
+  `services/`.
+- **`data/`** — Database models (SQLModel), session management, `DbRepository` base class.
+- **`ports/`** — Adapters for external services (Supabase client, Telegram bot).
+- **`core/`** — Application-wide config (`pydantic-settings`), bootstrap wiring, error/response middleware.
+
+When adding new functionality, prefer **feature-oriented organization**. Add new subdirectories under `features/` for
+new domains.
+
+## Coding Standards
+
+### Services
+
+- Services are **classes** with a `handle()` method that contains the business logic.
+- Export the class and a FastAPI `Dep` alias from the module:
+  ```python
+  class MyService:
+      def __init__(self, dependency: SomeDep):
+          self.__dependency = dependency
+
+      def handle(self, ...) -> ResultType:
+          ...
+
+  MyServiceDep = Annotated[MyService, Depends()]
+  ```
+- Import and re-export from the feature's `services/__init__.py`.
+
+### Repositories (Entities)
+
+- Repositories extend `DbRepository` (from `app.data`) for database access.
+- Use SQLModel `select()` queries. Call `self._db_session.exec(statement)`.
+- Export the class and a `Dep` alias:
+  ```python
+  class MyRepository(DbRepository):
+      def find_by_id(self, id: str) -> MyModel:
+          statement = select(MyModel).where(MyModel.id == id).limit(1)
+          return self._db_session.exec(statement).first()
+
+  MyRepositoryDep = Annotated[MyRepository, Depends()]
+  ```
+
+### Guards
+
+- Guards are **FastAPI dependency functions** that return authenticated/authorized user or payload objects.
+- Export `Depends(...)` aliases for use as router dependencies:
+  ```python
+  AuthenticatedGuardDep = Depends(_get_user_from_spb_token)
+  CurrentAuthenticatedUserDep = Annotated[User, Depends(_get_user_from_spb_token)]
+  ```
+
+### Request DTOs
+
+- Use **Pydantic BaseModel** classes for request bodies.
+- Place in the feature's `requests/` directory.
+
+### Entities
+
+- Use **Pydantic BaseModel** for domain models that do not map to a DB table.
+- Use **SQLModel** (inheriting from `SQLModel, table=True`) for database table models.
+- Place in the feature's `entities/` directory.
+
+### Exports
+
+- Every `__init__.py` should re-export the public API of its module (classes, `Dep` aliases).
+- Keep imports clean by importing from package-level `__init__.py` rather than deep module paths.
+
+### General
+
+- Use **strong typing** everywhere. Annotate function signatures and class attributes.
+- Avoid `Any` unless there is a clear and justified reason.
+- Prefer **private methods** with double-underscore prefix (`__method`).
+- Keep services and repositories lean. Extract reusable logic into shared utilities when justified.
+- Keep code concise, readable, and easy to reason about.
+- Avoid duplication; extract reusable pieces when justified.
+- Do not over-abstract prematurely.
+- Match the existing codebase style and conventions when editing existing files.
+- Prefer explicitness over hidden behavior.
+- Add comments only when they provide real value.
+- Do not leave dead code, commented-out blocks, or placeholder implementations unless explicitly requested.
+
+## Supabase vs Database
+
+When implementing data flows, respect the intended boundaries:
+
+- Use **Supabase** only for:
+    - User authentication (sign-in, token verification)
+    - Object storage (file upload, download, signed URLs)
+- Use **PostgreSQL (via SQLModel)** for:
+    - Business data (collections, keys, metadata)
+    - Any data that needs relational queries or transactional guarantees
+- If the correct boundary is unclear, prefer putting sensitive or business-critical logic behind the API rather than in
+  Supabase client-side rules.
+
+## Security Requirements
+
+Arcana Vault is a security-sensitive application. Treat all storage and file-handling features accordingly.
+
+- **Never** hardcode secrets, tokens, API keys, or service credentials.
+- **Never** expose privileged backend or Supabase service credentials in responses or logs.
+- All configuration comes from environment variables via `pydantic-settings` (`app/core/config.py`).
+- Assume all client code is inspectable by end users.
+- Prefer secure-by-default implementations.
+- Validate inputs rigorously using Pydantic models.
+- Be cautious with file uploads, metadata handling, and download flows.
+- Avoid insecure direct object reference patterns.
+- Respect authentication and authorization boundaries (Supabase bearer token, JWT secret header).
+- Prefer patterns compatible with row-level security and least-privilege access.
+- Avoid logging sensitive user or file data.
+- Do not store sensitive information in insecure persistence unless explicitly required and approved.
+
+## Code Quality
+
+After creating or editing code, always run:
+
+```bash
+source .venv/bin/activate
+ruff format
+ruff check
+deactivate
+```
+
+Rules:
+
+- Fix any lint issues introduced by your changes.
+- Do not ignore lint errors without a documented reason.
+- If additional validation commands already exist in the project, prefer running them when relevant.
+
+## Definition of Done
+
+A task is only considered complete when all of the following are true:
+
+- The implementation follows FastAPI and Python best practices.
+- Services use the class + `handle()` pattern with `Dep` aliases.
+- Repositories extend `DbRepository` and use SQLModel queries.
+- New modules are properly exported via `__init__.py`.
+- Code is strongly typed with no unjustified `Any`.
+- Security implications have been considered.
+- `ruff format` and `ruff check` have been run after the changes.
+- Any important assumptions or tradeoffs are clearly communicated.
+
+## Agent Behavior Expectations
+
+- Make the smallest reasonable change that fully solves the problem.
+- Do not make broad architectural changes unless explicitly requested.
+- Ask for clarification if:
+    - requirements conflict
+    - security boundaries are unclear
+    - the intended responsibility between Supabase and PostgreSQL is ambiguous
+    - a change could affect authentication, authorization, or file access rules
+- When suggesting improvements, prefer practical recommendations over speculative refactors.
+
+## Preferred Implementation Patterns
+
+- Feature-based module organization
+- Services with `handle()` method + `*Dep = Annotated[T, Depends()]`
+- Repositories extending `DbRepository` with SQLModel queries
+- Guards as FastAPI dependency functions
+- Pydantic BaseModel for DTOs and domain models
+- SQLModel for database table models
+- Consistent loading, error, and empty states in API responses
+- Use the global response wrapper (`{"ok": true, "content": ...}`) — it is applied automatically via middleware
+
+## Avoid
+
+- Business logic in HTTP routers (routers should be thin)
+- Hardcoded configuration values when environment variables are available
+- Unstructured error responses (use `AppException` for domain errors, `HTTPException` for standard HTTP errors)
+- Leaking sensitive data into logs, responses, or error messages
+- Overengineering simple features
+- Introducing dependencies without clear justification
+- Skipping `__init__.py` re-exports for new modules
+
+## If Unsure
+
+If implementation details are unclear, prefer:
+
+1. security
+2. simplicity
+3. maintainability
+4. consistency with the existing codebase
+
+When in doubt, ask for clarification before making risky or irreversible changes.
