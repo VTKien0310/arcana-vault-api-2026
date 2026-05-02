@@ -13,10 +13,10 @@ class SendUserKeyService:
 
     async def handle(self, key: Key) -> None:
         app_env = settings.ENVIRONMENT
-        message = f"Your {app_env} key is: {key.value}"
+        message = f"Your {app_env} key is: `{key.value}`"
 
         tasks = []
-        if KeyChannel.TELEGRAM.value in key.channels:
+        if KeyChannel.TELEGRAM.value in key.channels and key.telegram_chat_id:
             tasks.append(
                 self.__telegram_port.send_message(key.telegram_chat_id, message)
             )
