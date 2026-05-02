@@ -8,3 +8,4 @@ class ItemRequest(BaseModel):
 
 class ItemDeleteMultipleRequest(BaseModel):
     items: list[str] = Field(min_length=1)
+    collection: str = Field(default="", pattern=r"^[^/\\]*$")

@@ -56,11 +56,12 @@ def generate_view_url(
 @router.post("/delete-multiple")
 def delete_multiple(
     request: ItemDeleteMultipleRequest,
+    current_user: CurrentAuthenticatedUserDep,
     delete_multiple_items_service: DeleteMultipleItemsServiceDep,
 ):
-    delete_multiple_items_service.handle(request.items)
+    deleted_count = delete_multiple_items_service.handle(user=current_user, items=request.items, collection=request.collection)
 
-    return {"deleted_count": len(request.items)}
+    return {"deleted_count": deleted_count}
 
 
 @router.get("")
