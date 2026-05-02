@@ -1,1 +1,1 @@
-from .item_request import ItemRequest
+from .item_request import ItemRequest, ItemDeleteMultipleRequest

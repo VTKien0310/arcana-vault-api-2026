@@ -22,3 +22,8 @@ from .list_collections_service import (
     ListCollectionsService,
     ListCollectionsServiceDep,
 )
+
+from .delete_multiple_items_service import (
+    DeleteMultipleItemsService,
+    DeleteMultipleItemsServiceDep,
+)

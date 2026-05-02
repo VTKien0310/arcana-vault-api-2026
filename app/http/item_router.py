@@ -5,11 +5,12 @@ from app.features.authentication.guards import (
     SecretJwtGuardDep,
 )
 from app.features.item.entities import Item
-from app.features.item.requests import ItemRequest
+from app.features.item.requests import ItemRequest, ItemDeleteMultipleRequest
 from app.features.item.services import (
     GenerateUploadUrlServiceDep,
     ListItemInCollectionServiceDep,
     GenerateViewUrlServiceDep,
+    DeleteMultipleItemsServiceDep,
 )
 from app.http.request import ListResourceParamsDep
 
@@ -50,6 +51,16 @@ def generate_view_url(
     return {
         "url": signed_url,
     }
+
+
+@router.post("/delete-multiple")
+def delete_multiple(
+    request: ItemDeleteMultipleRequest,
+    delete_multiple_items_service: DeleteMultipleItemsServiceDep,
+):
+    delete_multiple_items_service.handle(request.items)
+
+    return {"deleted_count": len(request.items)}
 
 
 @router.get("")
