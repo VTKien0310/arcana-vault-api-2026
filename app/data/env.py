@@ -1,30 +1,14 @@
-import logging
-from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-from .models import model_common_metadata
-from .session import get_db_url
-
-# ==========================================
-# Loading Alembic configuration
-# ==========================================
+# these must be direct imports for Alembic CLI to work
+from app.data.models import model_common_metadata
+from app.data.session import get_db_url
 
 config = context.config
 
 if not config.get_main_option("sqlalchemy.url"):
     config.set_main_option("sqlalchemy.url", str(get_db_url()))
-
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-else:
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-
-# ==========================================
-# Running migrations
-# ==========================================
 
 target_metadata = model_common_metadata
 
