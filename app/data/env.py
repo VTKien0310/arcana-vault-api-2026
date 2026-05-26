@@ -2,30 +2,29 @@ import logging
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
-from sqlalchemy.engine import URL
 from alembic import context
 
-from app.core import settings
 from .models import model_common_metadata
+from .session import get_db_url
+
+# ==========================================
+# Loading Alembic configuration
+# ==========================================
 
 config = context.config
 
 if not config.get_main_option("sqlalchemy.url"):
-    db_url = URL.create(
-        drivername="postgresql",
-        username=settings.DB_USER,
-        password=settings.DB_PASSWORD,
-        host=settings.DB_HOST,
-        port=settings.DB_PORT,
-        database=settings.DB_NAME,
-    )
-    config.set_main_option("sqlalchemy.url", str(db_url))
+    config.set_main_option("sqlalchemy.url", str(get_db_url()))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 else:
     logging.basicConfig(level=logging.INFO)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+
+# ==========================================
+# Running migrations
+# ==========================================
 
 target_metadata = model_common_metadata
 
