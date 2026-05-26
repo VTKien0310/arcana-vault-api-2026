@@ -9,6 +9,7 @@ Some features are still in development or only working at the minimum acceptance
 
 - FastAPI
 - Supabase
+- Alembic
 
 ## System requirement
 

@@ -10,11 +10,11 @@ class DeleteMultipleItemsService:
         self.__spb_port = spb_port
 
     def handle(self, user: User, items: list[str], collection: str = "") -> int:
-        processed_items = [
-            f"{user.id}/{collection}/{item}" for item in items
-        ] if collection != "" else [
-            f"{user.id}/{item}" for item in items
-        ]
+        processed_items = (
+            [f"{user.id}/{collection}/{item}" for item in items]
+            if collection != ""
+            else [f"{user.id}/{item}" for item in items]
+        )
 
         return len(self.__spb_port.storage_vault().remove(processed_items))
 

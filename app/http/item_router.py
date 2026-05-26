@@ -59,7 +59,9 @@ def delete_multiple(
     current_user: CurrentAuthenticatedUserDep,
     delete_multiple_items_service: DeleteMultipleItemsServiceDep,
 ):
-    deleted_count = delete_multiple_items_service.handle(user=current_user, items=request.items, collection=request.collection)
+    deleted_count = delete_multiple_items_service.handle(
+        user=current_user, items=request.items, collection=request.collection
+    )
 
     return {"deleted_count": deleted_count}
 
