@@ -8,7 +8,9 @@ from app.data.session import get_db_url
 config = context.config
 
 if not config.get_main_option("sqlalchemy.url"):
-    config.set_main_option("sqlalchemy.url", str(get_db_url()))
+    config.set_main_option(
+        "sqlalchemy.url", get_db_url().render_as_string(hide_password=False)
+    )
 
 target_metadata = model_common_metadata
 
