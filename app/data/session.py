@@ -45,6 +45,15 @@ async def _get_db_session() -> AsyncGenerator[AsyncSession, None]:
 DbSessionDep = Annotated[AsyncSession, Depends(_get_db_session)]
 
 
+async def _get_db_transaction_session() -> AsyncGenerator[AsyncSession, None]:
+    async with _async_session_maker() as session:
+        async with session.begin():
+            yield session
+
+
+DbTransactionSessionDep = Annotated[AsyncSession, Depends(_get_db_transaction_session)]
+
+
 class DbRepository(ABC):
     def __init__(self, db_session: DbSessionDep):
         self._db_session = db_session
