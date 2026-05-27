@@ -19,7 +19,7 @@ async def refresh(
     refresh_user_key_service: RefreshUserKeyServiceDep,
     send_user_key_service: SendUserKeyServiceDep,
 ):
-    key = refresh_user_key_service.handle(current_user.id)
+    key = await refresh_user_key_service.handle(current_user.id)
 
     await send_user_key_service.handle(key)
 
@@ -27,11 +27,11 @@ async def refresh(
 
 
 @router.post("/submit")
-def submit(
+async def submit(
     request: KeyValueRequest,
     current_user: CurrentAuthenticatedUserDep,
     issue_key_jwt_service: IssueKeyJwtServiceDep,
 ):
-    jwt = issue_key_jwt_service.handle(current_user.id, request.value)
+    jwt = await issue_key_jwt_service.handle(current_user.id, request.value)
 
     return {"secret": jwt}

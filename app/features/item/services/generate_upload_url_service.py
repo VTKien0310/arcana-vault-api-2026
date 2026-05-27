@@ -17,8 +17,8 @@ class GenerateUploadUrlService:
         self.__spb_port = spb_port
         self.__collection_repository = collection_repository
 
-    def handle(self, user: User, filename: str, folder: str) -> dict[str, str]:
-        path = self.__make_file_path(user, filename, folder)
+    async def handle(self, user: User, filename: str, folder: str) -> dict[str, str]:
+        path = await self.__make_file_path(user, filename, folder)
 
         try:
             return self.__spb_port.storage_vault().create_signed_upload_url(path)
@@ -32,11 +32,11 @@ class GenerateUploadUrlService:
 
             raise storage_api_error
 
-    def __make_file_path(self, user: User, filename: str, folder: str) -> str:
+    async def __make_file_path(self, user: User, filename: str, folder: str) -> str:
         if folder == "":
             return f"{user.id}/{filename}"
 
-        self.__collection_repository.find_or_create(folder, user.id)
+        await self.__collection_repository.find_or_create(folder, user.id)
 
         return f"{user.id}/{folder}/{filename}"
 

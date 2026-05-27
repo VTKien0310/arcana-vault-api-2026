@@ -22,12 +22,12 @@ router = APIRouter(
 
 
 @router.post("/upload-url")
-def generate_upload_url(
+async def generate_upload_url(
     request: ItemRequest,
     current_user: CurrentAuthenticatedUserDep,
     generate_upload_url_service: GenerateUploadUrlServiceDep,
 ):
-    signed_url = generate_upload_url_service.handle(
+    signed_url = await generate_upload_url_service.handle(
         current_user, request.item, request.collection
     )
 

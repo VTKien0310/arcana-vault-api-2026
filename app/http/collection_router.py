@@ -15,10 +15,10 @@ router = APIRouter(
 
 
 @router.get("")
-def list_collections(
+async def list_collections(
     current_user: CurrentAuthenticatedUserDep,
     list_collections_service: ListCollectionsServiceDep,
 ) -> list[Collection]:
-    collections = list_collections_service.handle(current_user)
+    collections = await list_collections_service.handle(current_user)
 
     return collections

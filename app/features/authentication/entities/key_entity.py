@@ -13,19 +13,20 @@ class KeyChannel(Enum):
 
 
 class KeyRepository(DbRepository):
-    def update(self, key: Key) -> Key:
+    async def update(self, key: Key) -> Key:
         key.updated_at = datetime.now(timezone.utc)
 
         self._db_session.add(key)
-        self._db_session.commit()
-        self._db_session.refresh(key)
+        await self._db_session.commit()
+        await self._db_session.refresh(key)
 
         return key
 
-    def find_by_user_id(self, user_id: str) -> Key | None:
+    async def find_by_user_id(self, user_id: str) -> Key | None:
         statement = select(Key).where(Key.user_id == user_id).limit(1)
+        result = await self._db_session.exec(statement)
 
-        return self._db_session.exec(statement).first()
+        return result.first()
 
 
 KeyRepositoryDep = Annotated[KeyRepository, Depends()]

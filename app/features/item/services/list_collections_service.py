@@ -11,8 +11,8 @@ class ListCollectionsService:
     def __init__(self, collection_repository: CollectionRepositoryDep):
         self.__collection_repository = collection_repository
 
-    def handle(self, user: User) -> list[Collection]:
-        return self.__collection_repository.list_by_user_id(user.id)
+    async def handle(self, user: User) -> list[Collection]:
+        return await self.__collection_repository.list_by_user_id(user.id)
 
 
 ListCollectionsServiceDep = Annotated[ListCollectionsService, Depends()]

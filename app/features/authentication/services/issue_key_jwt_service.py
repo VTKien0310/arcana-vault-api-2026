@@ -20,8 +20,8 @@ class IssueKeyJwtService:
     def __init__(self, get_user_key_service: GetUserKeyServiceDep):
         self.__get_user_key_service = get_user_key_service
 
-    def handle(self, user_id: str, key_value: str) -> str:
-        user_key = self.__get_user_key_service.handle(user_id)
+    async def handle(self, user_id: str, key_value: str) -> str:
+        user_key = await self.__get_user_key_service.handle(user_id)
 
         if user_key.value != key_value:
             raise AppException(

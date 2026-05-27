@@ -17,8 +17,8 @@ class RefreshUserKeyService:
         self.__key_repository = key_repository
         self.__get_user_key_service = get_user_key_service
 
-    def handle(self, user_id: str) -> Key:
-        key = self.__get_user_key_service.handle(user_id)
+    async def handle(self, user_id: str) -> Key:
+        key = await self.__get_user_key_service.handle(user_id)
 
         if key.expiration > datetime.now(timezone.utc):
             return key
@@ -28,7 +28,7 @@ class RefreshUserKeyService:
         )
         key.value = str(secrets.randbelow(100000000)).zfill(8)
 
-        return self.__key_repository.update(key)
+        return await self.__key_repository.update(key)
 
 
 RefreshUserKeyServiceDep = Annotated[RefreshUserKeyService, Depends()]

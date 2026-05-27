@@ -1,1 +1,1 @@
-from .key_request import KeyValueRequest
+from .key_request import KeyValueRequest as KeyValueRequest
