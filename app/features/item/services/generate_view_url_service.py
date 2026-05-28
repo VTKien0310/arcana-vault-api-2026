@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from app import settings
+from app.core import settings
 from app.features.authentication.entities import User
 from app.ports import SupabasePortDep
 

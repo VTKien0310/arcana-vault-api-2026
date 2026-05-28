@@ -1,7 +1,7 @@
 from typing import Annotated
 import httpx
 from fastapi import Depends
-from app import settings
+from app.core import settings
 
 
 class TelegramPort:
