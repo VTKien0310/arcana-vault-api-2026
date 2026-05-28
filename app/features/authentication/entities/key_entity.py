@@ -1,4 +1,4 @@
-from app.data import DbRepository, Key
+from app.database import DbRepository, Key
 from datetime import datetime, timezone
 from typing import Annotated
 from fastapi import Depends

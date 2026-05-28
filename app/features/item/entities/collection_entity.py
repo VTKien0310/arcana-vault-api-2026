@@ -1,4 +1,4 @@
-from app.data import DbRepository, Collection
+from app.database import DbRepository, Collection
 from typing import Annotated
 from fastapi import Depends
 from sqlmodel import select

@@ -2,8 +2,8 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 # these must be direct imports for Alembic CLI to work
-from app.data.models import model_common_metadata
-from app.data.session import get_db_url
+from app.database.models import model_common_metadata
+from app.database.session import get_db_url
 
 config = context.config
 

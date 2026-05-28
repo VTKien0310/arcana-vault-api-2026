@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Depends
-from app.data import Collection
+from app.database import Collection
 from app.features.authentication.entities.user_entity import User
 from app.features.item.entities import (
     CollectionRepositoryDep,

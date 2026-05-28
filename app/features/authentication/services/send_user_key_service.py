@@ -2,7 +2,7 @@ import asyncio
 from typing import Annotated
 from fastapi import Depends
 from app.core import settings
-from app.data import Key
+from app.database import Key
 from app.features.authentication.entities import KeyChannel
 from app.ports import TelegramPortDep
 

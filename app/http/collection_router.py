@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.data import Collection
+from app.database import Collection
 from app.features.authentication.guards import (
     CurrentAuthenticatedUserDep,
     AuthenticatedGuardDep,

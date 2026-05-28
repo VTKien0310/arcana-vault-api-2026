@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from app.core.config import settings
 from app.features.authentication.entities import KeyRepositoryDep
-from app.data import Key
+from app.database import Key
 from .get_user_key_service import GetUserKeyServiceDep
 
 

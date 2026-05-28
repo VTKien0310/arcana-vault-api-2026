@@ -79,16 +79,16 @@ This project uses **Alembic** for database schema migrations. Alembic is configu
 
 ### Structure
 
-- **`app/data/env.py`** — Alembic migration environment. Constructs the database URL from `app.core.settings` and sets
-  `target_metadata` to `model_common_metadata` from `app/data/models.py`.
-- **`app/data/versions/`** — Migration script directory. Each file represents one schema revision.
-- **`app/data/script.py.mako`** — Mako template used to generate new migration files.
+- **`app/database/env.py`** — Alembic migration environment. Constructs the database URL from `app.core.settings` and sets
+  `target_metadata` to `model_common_metadata` from `app/database/models.py`.
+- **`app/database/versions/`** — Migration script directory. Each file represents one schema revision.
+- **`app/database/script.py.mako`** — Mako template used to generate new migration files.
 
 ### Key Rules
 
 - All SQLModel table models **must** set `metadata = model_common_metadata` so Alembic can detect them during
   autogeneration.
-- All table models are defined in `app/data/models.py`. When adding a new table, add it there and set the metadata.
+- All table models are defined in `app/database/models.py`. When adding a new table, add it there and set the metadata.
 - After modifying any SQLModel table model, generate a new migration:
   ```bash
   source .venv/bin/activate
@@ -133,7 +133,7 @@ This project uses **Alembic** for database schema migrations. Alembic is configu
 
 ### Repositories (Entities)
 
-- Repositories extend `DbRepository` (from `app.data`) for database access.
+- Repositories extend `DbRepository` (from `app.database`) for database access.
 - Use SQLModel `select()` queries. Call `self._db_session.exec(statement)`.
 - Export the class and a `Dep` alias:
   ```python
