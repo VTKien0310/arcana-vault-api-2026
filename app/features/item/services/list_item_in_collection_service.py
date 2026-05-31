@@ -1,15 +1,15 @@
 from typing import Annotated
 from fastapi import Depends
 from app.features.authentication.entities import User
-from app.features.item.entities import ItemRepositoryDep, Item
+from app.features.item.entities import ItemFactoryDep, Item
 from app.http.request import SortCondition
 from app.ports import SupabasePortDep
 
 
 class ListItemInCollectionService:
-    def __init__(self, spb_port: SupabasePortDep, item_repository: ItemRepositoryDep):
+    def __init__(self, spb_port: SupabasePortDep, item_factory: ItemFactoryDep):
         self.__spb_port = spb_port
-        self.__item_repository = item_repository
+        self.__item_factory = item_factory
 
     def handle(
         self,
@@ -42,7 +42,7 @@ class ListItemInCollectionService:
             },
         )
 
-        return self.__item_repository.items_from_spb_list(list_results)
+        return self.__item_factory.items_from_spb_list(list_results)
 
 
 ListItemInCollectionServiceDep = Annotated[ListItemInCollectionService, Depends()]

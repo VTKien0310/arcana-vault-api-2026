@@ -15,7 +15,7 @@ class Item(BaseModel):
     mime_type: str | None
 
 
-class ItemRepository:
+class ItemFactory:
     @classmethod
     def item_from_spb_list(cls, item_dict: dict[str, Any]) -> Item:
         metadata = item_dict.get("metadata", {})
@@ -40,4 +40,4 @@ class ItemRepository:
         return [cls.item_from_spb_list(item) for item in items_dict]
 
 
-ItemRepositoryDep = Annotated[ItemRepository, Depends()]
+ItemFactoryDep = Annotated[ItemFactory, Depends()]

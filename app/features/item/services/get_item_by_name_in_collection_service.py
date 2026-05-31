@@ -1,13 +1,13 @@
 from typing import Annotated
 from fastapi import Depends
-from app.features.item.entities import ItemRepositoryDep, Item
+from app.features.item.entities import ItemFactoryDep, Item
 from app.ports import SupabasePortDep
 
 
 class GetItemByNameInCollectionService:
-    def __init__(self, spb_port: SupabasePortDep, item_repository: ItemRepositoryDep):
+    def __init__(self, spb_port: SupabasePortDep, item_factory: ItemFactoryDep):
         self.__spb_port = spb_port
-        self.__item_repository = item_repository
+        self.__item_factory = item_factory
 
     def handle(self, user_id: str, item_name: str, collection: str = "") -> Item | None:
         path = user_id
@@ -26,7 +26,7 @@ class GetItemByNameInCollectionService:
         if len(list_result) == 0:
             return None
 
-        return self.__item_repository.item_from_spb_list(list_result[0])
+        return self.__item_factory.item_from_spb_list(list_result[0])
 
 
 GetItemByNameInCollectionServiceDep = Annotated[

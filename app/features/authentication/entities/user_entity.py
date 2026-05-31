@@ -5,8 +5,6 @@ from fastapi import Depends
 from pydantic import BaseModel
 from supabase_auth import User as SupabaseAuthUser
 
-from app.ports import SupabasePortDep
-
 
 class User(BaseModel):
     id: str
@@ -14,10 +12,7 @@ class User(BaseModel):
     created_at: datetime
 
 
-class UserRepository:
-    def __init__(self, supabase: SupabasePortDep):
-        self.__supabase = supabase
-
+class UserFactory:
     @classmethod
     def user_from_spb_auth(cls, spb_auth: SupabaseAuthUser) -> User:
         return User(
@@ -27,4 +22,4 @@ class UserRepository:
         )
 
 
-UserRepositoryDep = Annotated[UserRepository, Depends()]
+UserFactoryDep = Annotated[UserFactory, Depends()]
