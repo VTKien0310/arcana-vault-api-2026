@@ -5,3 +5,4 @@ from .models import model_common_metadata as model_common_metadata
 from .session import DbRepository as DbRepository
 from .session import DbSessionDep as DbSessionDep
 from .session import DbTransactionSessionDep as DbTransactionSessionDep
+from .session import DbSessionManagerDep as DbSessionManagerDep
