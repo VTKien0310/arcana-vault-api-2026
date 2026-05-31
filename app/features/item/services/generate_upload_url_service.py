@@ -3,7 +3,8 @@ from fastapi import Depends
 from storage3.exceptions import StorageApiError
 
 from app.core import AppException
-from app.features.item.entities import CollectionRepositoryDep
+from app.database import DbSessionManagerDep
+from app.features.item.data import FindOrCreateCollectionWriterDep
 from app.features.authentication.entities import User
 from app.ports import SupabasePortDep
 
@@ -12,10 +13,12 @@ class GenerateUploadUrlService:
     def __init__(
         self,
         spb_port: SupabasePortDep,
-        collection_repository: CollectionRepositoryDep,
+        db_session_manager: DbSessionManagerDep,
+        find_or_create_collection_writer: FindOrCreateCollectionWriterDep,
     ):
         self.__spb_port = spb_port
-        self.__collection_repository = collection_repository
+        self.__db_session_manager = db_session_manager
+        self.__find_or_create_collection_writer = find_or_create_collection_writer
 
     async def handle(self, user: User, filename: str, folder: str) -> dict[str, str]:
         path = await self.__make_file_path(user, filename, folder)
@@ -36,7 +39,10 @@ class GenerateUploadUrlService:
         if folder == "":
             return f"{user.id}/{filename}"
 
-        await self.__collection_repository.find_or_create(folder, user.id)
+        async with self.__db_session_manager.session() as db_session:
+            await self.__find_or_create_collection_writer.handle(
+                db_session, folder, user.id
+            )
 
         return f"{user.id}/{folder}/{filename}"
 
