@@ -1,4 +1,3 @@
-from abc import ABC
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Annotated
@@ -90,8 +89,3 @@ DbSessionManagerDep = Annotated[
     DbSessionManager,
     Depends(get_db_session_manager),
 ]
-
-
-class DbRepository(ABC):
-    def __init__(self, db_session: DbSessionDep):
-        self._db_session = db_session

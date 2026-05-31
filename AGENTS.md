@@ -47,9 +47,10 @@ The application follows a layered architecture under `app/`:
 ```
 app/
 ├── core/          # Config, bootstrap, error handling, response wrapping
-├── data/          # SQLModel database models, session, DbRepository base class
+├── database/      # SQLModel table models, session management, Alembic migrations
 ├── features/      # Domain logic organized by feature (authentication, item, ...)
-│   ├── entities/  # Domain models, repositories
+│   ├── data/      # CQRS readers and writers (database operations)
+│   ├── entities/  # Domain models, factories, enums
 │   ├── guards/    # Auth guards (Supabase bearer, JWT secret header)
 │   ├── requests/  # Request DTOs (Pydantic BaseModel)
 │   └── services/  # Business logic services
@@ -63,9 +64,9 @@ app/
 ### Layers
 
 - **`http/`** — Thin routers. Parse requests, delegate to services, return responses. No business logic.
-- **`features/`** — All domain logic. Organized by feature. Each feature has `entities/`, `guards/`, `requests/`,
+- **`features/`** — All domain logic. Organized by feature. Each feature has `data/`, `entities/`, `guards/`, `requests/`,
   `services/`.
-- **`data/`** — Database models (SQLModel), session management, `DbRepository` base class.
+- **`database/`** — SQLModel table models, session management, Alembic migrations.
 - **`ports/`** — Adapters for external services (Supabase client, Telegram bot).
 - **`core/`** — Application-wide config (`pydantic-settings`), bootstrap wiring, error/response middleware.
 
@@ -131,18 +132,20 @@ This project uses **Alembic** for database schema migrations. Alembic is configu
   ```
 - Import and re-export from the feature's `services/__init__.py`.
 
-### Repositories (Entities)
+### Data Access (Readers & Writers)
 
-- Repositories extend `DbRepository` (from `app.database`) for database access.
-- Use SQLModel `select()` queries. Call `self._db_session.exec(statement)`.
+- Database operations are organized as **reader** and **writer** classes in each feature's `data/` directory (CQRS pattern).
+- Use `@classmethod` `handle()` methods that receive `AsyncSession` as a parameter.
 - Export the class and a `Dep` alias:
   ```python
-  class MyRepository(DbRepository):
-      def find_by_id(self, id: str) -> MyModel:
-          statement = select(MyModel).where(MyModel.id == id).limit(1)
-          return self._db_session.exec(statement).first()
+  class FindByUserIdReader:
+      @classmethod
+      async def handle(cls, db_session: AsyncSession, user_id: str) -> Key | None:
+          statement = select(Key).where(Key.user_id == user_id).limit(1)
+          result = await db_session.exec(statement)
+          return result.first()
 
-  MyRepositoryDep = Annotated[MyRepository, Depends()]
+  FindByUserIdReaderDep = Annotated[FindByUserIdReader, Depends()]
   ```
 
 ### Guards
@@ -175,7 +178,7 @@ This project uses **Alembic** for database schema migrations. Alembic is configu
 - Use **strong typing** everywhere. Annotate function signatures and class attributes.
 - Avoid `Any` unless there is a clear and justified reason.
 - Prefer **private methods** with double-underscore prefix (`__method`).
-- Keep services and repositories lean. Extract reusable logic into shared utilities when justified.
+- Keep services, readers, and writers lean. Extract reusable logic into shared utilities when justified.
 - Keep code concise, readable, and easy to reason about.
 - Avoid duplication; extract reusable pieces when justified.
 - Do not over-abstract prematurely.
@@ -237,7 +240,7 @@ A task is only considered complete when all of the following are true:
 
 - The implementation follows FastAPI and Python best practices.
 - Services use the class + `handle()` pattern with `Dep` aliases.
-- Repositories extend `DbRepository` and use SQLModel queries.
+- Data access uses reader/writer classes with `@classmethod handle()` pattern.
 - New modules are properly exported via `__init__.py`.
 - Code is strongly typed with no unjustified `Any`.
 - Security implications have been considered.
@@ -259,7 +262,7 @@ A task is only considered complete when all of the following are true:
 
 - Feature-based module organization
 - Services with `handle()` method + `*Dep = Annotated[T, Depends()]`
-- Repositories extending `DbRepository` with SQLModel queries
+- CQRS-style readers/writers in feature `data/` directories with `@classmethod handle()`
 - Guards as FastAPI dependency functions
 - Pydantic BaseModel for DTOs and domain models
 - SQLModel for database table models
