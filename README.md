@@ -58,6 +58,26 @@ uvicorn app.main:app --reload
 ruff format
 ```
 
+## Database Migrations
+
+This project uses Alembic for database schema migrations.
+
+```shell
+# Generate a new migration after modifying models
+alembic revision --autogenerate -m "description of change"
+
+# Apply all pending migrations
+alembic upgrade head
+
+# Check current migration version
+alembic current
+
+# View migration history
+alembic history
+```
+
+> Always activate the virtual environment (`source .venv/bin/activate`) before running Alembic commands.
+
 ## Deploying to Fly.io
 
 This project is ready to run on Fly.io using the included `Dockerfile` and `fly.toml`.
