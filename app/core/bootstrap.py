@@ -8,7 +8,7 @@ from .response import apply_global_response_interface
 
 def bootstrap_application(
     router_registry: List[APIRouter],
-    lifespan: Callable[[FastAPI], AsyncContextManager[None]],
+    lifespan_handler: Callable[[FastAPI], AsyncContextManager[None]],
 ) -> FastAPI:
     app = FastAPI(
         title=settings.APP_NAME,
@@ -16,7 +16,7 @@ def bootstrap_application(
         docs_url="/docs" if settings.APP_ENABLE_DOCS else None,
         redoc_url="/redoc" if settings.APP_ENABLE_DOCS else None,
         openapi_url="/openapi.json" if settings.APP_ENABLE_DOCS else None,
-        lifespan=lifespan,
+        lifespan=lifespan_handler,
     )
 
     apply_global_response_interface(app)
@@ -30,7 +30,7 @@ def bootstrap_application(
 
 def _config_cors(app: FastAPI) -> None:
     app.add_middleware(
-        CORSMiddleware,
+        CORSMiddleware,  # type: ignore - known issue with FastAPI that might get fixed in the future
         allow_origins=settings.API_ALLOW_ORIGINS,
         allow_credentials=True,
         allow_methods=["*"],
