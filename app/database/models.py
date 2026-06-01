@@ -25,11 +25,11 @@ class Key(SQLModel, table=True):
     phone: Optional[str] = Field(default=None, max_length=255)
     created_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
-        default_factory=lambda: datetime.now(timezone.utc)
+        default_factory=lambda: datetime.now(timezone.utc),
     )
     updated_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
-        default_factory=lambda: datetime.now(timezone.utc)
+        default_factory=lambda: datetime.now(timezone.utc),
     )
 
 
@@ -45,5 +45,5 @@ class Collection(SQLModel, table=True):
     name: str = Field(max_length=255, nullable=False)
     created_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
-        default_factory=lambda: datetime.now(timezone.utc)
+        default_factory=lambda: datetime.now(timezone.utc),
     )
