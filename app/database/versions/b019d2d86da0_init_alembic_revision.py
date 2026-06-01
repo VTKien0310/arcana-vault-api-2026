@@ -27,7 +27,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id"),
         schema="arcana_vault",
@@ -47,7 +47,7 @@ def upgrade() -> None:
             "value", sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False
         ),
         sa.Column("channels", sa.ARRAY(sa.Integer()), nullable=False),
-        sa.Column("expiration", sa.DateTime(), nullable=False),
+        sa.Column("expiration", sa.DateTime(timezone=True), nullable=False),
         sa.Column("email", sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
         sa.Column(
             "telegram_chat_id",
@@ -55,8 +55,8 @@ def upgrade() -> None:
             nullable=True,
         ),
         sa.Column("phone", sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id"),
         sa.UniqueConstraint("user_id"),

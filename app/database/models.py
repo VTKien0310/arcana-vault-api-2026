@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Column, ARRAY, Integer, MetaData, Index
+from sqlmodel import Field, SQLModel, Column, ARRAY, Integer, MetaData, Index, DateTime
 from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID, uuid4
@@ -17,15 +17,19 @@ class Key(SQLModel, table=True):
     user_id: UUID = Field(nullable=False, unique=True)
     value: str = Field(max_length=255, nullable=False)
     channels: List[int] = Field(sa_column=Column(ARRAY(Integer), nullable=False))
-    expiration: datetime = Field(nullable=False)
+    expiration: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False)
+    )
     email: Optional[str] = Field(default=None, max_length=255)
     telegram_chat_id: Optional[str] = Field(default=None, max_length=255)
     phone: Optional[str] = Field(default=None, max_length=255)
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), nullable=False
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc)
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), nullable=False
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc)
     )
 
 
@@ -40,5 +44,6 @@ class Collection(SQLModel, table=True):
     user_id: UUID = Field(nullable=False)
     name: str = Field(max_length=255, nullable=False)
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), nullable=False
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc)
     )

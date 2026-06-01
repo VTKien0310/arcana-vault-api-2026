@@ -30,28 +30,6 @@ def get_async_db_url() -> URL:
 
 
 _async_engine = create_async_engine(get_async_db_url(), pool_pre_ping=True)
-_async_session_maker = async_sessionmaker(
-    _async_engine,
-    class_=AsyncSession,
-    expire_on_commit=False,
-)
-
-
-async def _get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    async with _async_session_maker() as session:
-        yield session
-
-
-DbSessionDep = Annotated[AsyncSession, Depends(_get_db_session)]
-
-
-async def _get_db_transaction_session() -> AsyncGenerator[AsyncSession, None]:
-    async with _async_session_maker() as session:
-        async with session.begin():
-            yield session
-
-
-DbTransactionSessionDep = Annotated[AsyncSession, Depends(_get_db_transaction_session)]
 
 
 class DbSessionManager:
