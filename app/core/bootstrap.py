@@ -8,7 +8,7 @@ from .response import apply_global_response_interface
 
 def bootstrap_application(
     router_registry: List[APIRouter],
-    lifespan_handler: Callable[[FastAPI], AsyncContextManager[None]],
+    lifespan_handler: Callable[[FastAPI], AsyncContextManager[None]] | None = None,
 ) -> FastAPI:
     app = FastAPI(
         title=settings.APP_NAME,
