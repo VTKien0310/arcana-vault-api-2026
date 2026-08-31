@@ -195,7 +195,7 @@ When implementing data flows, respect the intended boundaries:
     - User authentication (sign-in, token verification)
     - Object storage (file upload, download, signed URLs)
 - Use **PostgreSQL (via SQLModel)** for:
-    - Business data (collections, keys, metadata)
+    - Business data (keys, metadata)
     - Any data that needs relational queries or transactional guarantees
 - If the correct boundary is unclear, prefer putting sensitive or business-critical logic behind the API rather than in
   Supabase client-side rules.

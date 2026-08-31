@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Column, ARRAY, Integer, MetaData, Index, DateTime
+from sqlmodel import Field, SQLModel, Column, ARRAY, Integer, MetaData, DateTime
 from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID, uuid4
@@ -28,22 +28,6 @@ class Key(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
     )
     updated_at: datetime = Field(
-        sa_column=Column(DateTime(timezone=True), nullable=False),
-        default_factory=lambda: datetime.now(timezone.utc),
-    )
-
-
-class Collection(SQLModel, table=True):
-    metadata = model_common_metadata
-    __tablename__ = "collections"
-    __table_args__ = (Index("collections_index_0", "user_id"),)
-
-    id: UUID = Field(
-        default_factory=uuid4, primary_key=True, nullable=False, unique=True
-    )
-    user_id: UUID = Field(nullable=False)
-    name: str = Field(max_length=255, nullable=False)
-    created_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
         default_factory=lambda: datetime.now(timezone.utc),
     )

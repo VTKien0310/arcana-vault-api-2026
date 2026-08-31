@@ -12,15 +12,3 @@ CREATE TABLE IF NOT EXISTS "keys"
     "updated_at"       TIMESTAMPTZ   NOT NULL        DEFAULT now(),
     PRIMARY KEY ("id")
 );
-
-CREATE TABLE IF NOT EXISTS "collections"
-(
-    "id"         UUID         NOT NULL UNIQUE DEFAULT gen_random_uuid(),
-    "user_id"    UUID         NOT NULL,
-    "name"       VARCHAR(255) NOT NULL,
-    "created_at" TIMESTAMPTZ  NOT NULL        DEFAULT now(),
-    PRIMARY KEY ("id")
-);
-
-CREATE INDEX "collections_index_0"
-    ON "collections" ("user_id");
